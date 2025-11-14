@@ -1,38 +1,19 @@
-name: CI
-
+name: Build
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-
+    types: [opened, synchronize, reopened]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  sonarqube:
+    name: SonarQube
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install Node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
         with:
-          node-version: 18
-
-      - name: Install deps
-        run: npm install
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Build
-        run: npm run build
-        
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v2
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=smartbuild-front
-            -Dsonar.sources=.
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: http://YOUR-IP-OR-LOCALHOST:9000
