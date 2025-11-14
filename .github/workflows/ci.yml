@@ -25,3 +25,14 @@ jobs:
 
       - name: Build
         run: npm run build
+        
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=smartbuild-front
+            -Dsonar.sources=.
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://YOUR-IP-OR-LOCALHOST:9000
